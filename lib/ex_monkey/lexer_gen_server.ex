@@ -2,6 +2,7 @@ defmodule ExMonkey.Lexer.GenServer do
   use GenServer
 
   alias ExMonkey.Token
+  alias ExMonkey.Lexer.Helper
 
   def start_link(name, input) do
     init_state = %{
@@ -19,19 +20,19 @@ defmodule ExMonkey.Lexer.GenServer do
   end
 
   require IEx
-  # Server (callbacks)
+
   def handle_call({:next_token}, from, state) do
     IO.inspect(state[:char])
-    if state[:char] |> is_letter? do
+    if state[:char] |> Helper.is_letter? do
       new_state = state |> get_identifier("")
-      with :ignore <- new_state[:char] |> Token.from_string do
+      with :skip <- new_state[:char] |> Token.from_string do
         handle_call({:next_token}, from, new_state)
       else
         char -> {:reply, char, new_state |> read_char}
       end
     else
       new_state = read_char(state)
-      with :ignore <- state[:char] |> Token.from_string do
+      with :skip <- state[:char] |> Token.from_string do
         handle_call({:next_token}, from, new_state)
       else
         char -> {:reply, char, new_state}
@@ -40,13 +41,12 @@ defmodule ExMonkey.Lexer.GenServer do
   end
 
   def get_identifier(state, identifier) do
-    x = state[:input] |> get_char(state[:position])
-    x2 = read_char(state)
-    new_state =  x2 |> Map.merge(%{char: identifier <> x})
-    if state[:input] |> String.codepoints() |> Enum.at(state[:read_position]) |> is_letter? do
-      get_identifier(new_state, identifier <> x)
-    else
+    char = state[:input] |> get_char(state[:position])
+    new_state =  state |> read_char() |> Map.merge(%{char: identifier <> char})
+    unless state[:input] |> String.codepoints() |> Enum.at(state[:read_position]) |> Helper.is_letter? do
       new_state
+    else
+      get_identifier(new_state, identifier <> char)
     end
   end
 
@@ -57,12 +57,6 @@ defmodule ExMonkey.Lexer.GenServer do
       read_position: state[:read_position] + 1,
       char: state[:input] |> get_char(state[:read_position])
     }
-  end
-
-  def is_letter?(" "), do: false
-  def is_letter?(:eof), do: false
-  def is_letter?(char) do
-    char |> String.match?(~r/[A-Za-z_]/)
   end
 
   def get_char(input, position) do

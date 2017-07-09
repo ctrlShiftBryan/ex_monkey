@@ -1,6 +1,7 @@
 defmodule ExMonkey.Token do
   defstruct [:type, :literal]
   alias ExMonkey.Token
+  alias ExMonkey.Lexer.Helper
 
   @tokens %{
     illegal:   "ILLEGAL",
@@ -27,8 +28,8 @@ defmodule ExMonkey.Token do
     rbrace:    "}",
 
     # keywords
-    function:  "FUNCTION",
-    let:       "LET"
+    function:  "fn",
+    let:       "let"
   }
 
 
@@ -38,9 +39,16 @@ defmodule ExMonkey.Token do
     end
   end
 
-  def from_string("let"), do: %Token{type: :let, literal: "let"}
-  def from_string(" "), do: :ignore
-  def from_string("\n"), do: :ignore
-  def from_string(ident), do: %Token{type: :ident, literal: ident}
+  def from_string(" "), do: :skip
+  def from_string("\t"), do: :skip
+  def from_string("\n"), do: :skip
+  def from_string("\r"), do: :skip
 
+  def from_string(ident) do
+    if Helper.is_letter?(ident) do
+      %Token{type: :ident, literal: ident}
+    else
+      %Token{type: :illegal, literal: ident}
+    end
+  end
 end
