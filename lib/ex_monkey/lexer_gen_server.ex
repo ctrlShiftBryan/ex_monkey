@@ -9,7 +9,7 @@ defmodule ExMonkey.Lexer.GenServer do
       input: input,
       position: 0,
       read_position: 1,
-      char: input |> String.codepoints |> Enum.at(0)
+      char: input |> String.codepoints |> IO.inspect |> Enum.at(0)
     }
     GenServer.start_link(__MODULE__, init_state, name: name)
   end
@@ -22,8 +22,7 @@ defmodule ExMonkey.Lexer.GenServer do
   require IEx
 
   def handle_call({:next_token}, from, state) do
-    IO.inspect(state[:char])
-    if state[:char] |> Helper.is_letter? do
+    if state[:char] |> Helper.is_letter_or_digit? do
       new_state = state |> get_identifier("")
       with :skip <- new_state[:char] |> Token.from_string do
         handle_call({:next_token}, from, new_state)
@@ -42,9 +41,11 @@ defmodule ExMonkey.Lexer.GenServer do
 
   def get_identifier(state, identifier) do
     char = state[:input] |> get_char(state[:position])
-    new_state =  state |> read_char() |> Map.merge(%{char: identifier <> char})
-    unless state[:input] |> String.codepoints() |> Enum.at(state[:read_position]) |> Helper.is_letter? do
-      new_state
+    position = state[:position] + 1
+    read_position = state[:read_position] + 1
+    new_state =  state |> Map.merge(%{char: identifier <> char, position: position, read_position: read_position})
+    unless state[:input] |> String.codepoints() |> Enum.at(state[:read_position]) |> Helper.is_letter_or_digit? do
+      state |> Map.merge(%{char: identifier <> char})
     else
       get_identifier(new_state, identifier <> char)
     end

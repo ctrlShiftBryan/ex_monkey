@@ -19,7 +19,7 @@ defmodule ExMonkey.Token do
 
 
     # delimiters
-    coma:      ",",
+    comma:      ",",
     semicolon: ";",
 
     lparen:    "(",
@@ -45,10 +45,10 @@ defmodule ExMonkey.Token do
   def from_string("\r"), do: :skip
 
   def from_string(ident) do
-    if Helper.is_letter?(ident) do
-      %Token{type: :ident, literal: ident}
-    else
-      %Token{type: :illegal, literal: ident}
+    cond do
+      Helper.is_letter?(ident) -> %Token{type: :ident, literal: ident}
+      Helper.is_digit?(ident) -> %Token{type: :int, literal: ident}
+      true -> %Token{type: :illegal, literal: ident}
     end
   end
 end
