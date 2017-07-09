@@ -1,5 +1,6 @@
 defmodule ExMonkey.Token do
   defstruct [:type, :literal]
+  alias ExMonkey.Token
 
   @tokens %{
     illegal:   "ILLEGAL",
@@ -33,9 +34,13 @@ defmodule ExMonkey.Token do
 
   for {token, string} <- @tokens do
     def from_string(unquote(string)) do
-      %ExMonkey.Token{type: unquote(token), literal: unquote(string)}
+      %Token{type: unquote(token), literal: unquote(string)}
     end
   end
 
-  def from_string(_), do: :illegal
+  def from_string("let"), do: %Token{type: :let, literal: "let"}
+  def from_string(" "), do: :ignore
+  def from_string("\n"), do: :ignore
+  def from_string(ident), do: %Token{type: :ident, literal: ident}
+
 end
