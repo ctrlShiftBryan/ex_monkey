@@ -9,7 +9,7 @@ defmodule ExMonkey.Lexer.GenServer do
       input: input,
       position: 0,
       read_position: 1,
-      char: input |> String.codepoints |> IO.inspect |> Enum.at(0)
+      char: input |> String.codepoints |> Enum.at(0)
     }
     GenServer.start_link(__MODULE__, init_state, name: name)
   end
