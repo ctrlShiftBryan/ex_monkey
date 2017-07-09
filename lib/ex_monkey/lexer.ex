@@ -1,9 +1,11 @@
 defmodule ExMonkey.Lexer do
+  alias ExMonkey.Lexer.GenServer
+
   def new(input) do
-    ExMonkey.Lexer.GenServer.start_link(:lexer, input)
+    GenServer.start_link(:lexer, input)
   end
 
   def next_token() do
-    ExMonkey.Lexer.GenServer.next_token(:lexer)
+    GenServer.next_token(:lexer)
   end
 end
