@@ -1,24 +1,3 @@
 # ExMonkey
 
-**TODO: Add description**
-
-## Installation
-
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed as:
-
-  1. Add `ex_monkey` to your list of dependencies in `mix.exs`:
-
-    ```elixir
-    def deps do
-      [{:ex_monkey, "~> 0.1.0"}]
-    end
-    ```
-
-  2. Ensure `ex_monkey` is started before your application:
-
-    ```elixir
-    def application do
-      [applications: [:ex_monkey]]
-    end
-    ```
-
+An Interpreter for the Monkey Programming Language, as described in the book, https://interpreterbook.com/, written in Elixir.
