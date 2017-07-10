@@ -4,32 +4,32 @@ defmodule ExMonkey.Token do
   alias ExMonkey.Lexer.Helper
 
   @tokens %{
-    illegal:   "ILLEGAL",
-    eof:       :eof,
-
-
-    # identifiers and literals
-    ident:     "IDENT",
-    int:       "INT",
-
+    eof:          :eof,
 
     # operators
-    assign:    "=",
-    plus:      "+",
-
+    assign:       "=",
+    plus:         "+",
+    minus:        "-",
+    divide:       "/",
+    multiply:     "*",
 
     # delimiters
-    comma:      ",",
-    semicolon: ";",
+    comma:        ",",
+    semicolon:    ";",
 
-    lparen:    "(",
-    rparen:    ")",
-    lbrace:    "{",
-    rbrace:    "}",
+    exclamation:  "!",
+
+    greater_than: ">",
+    less_than:    "<",
+
+    lparen:       "(",
+    rparen:       ")",
+    lbrace:       "{",
+    rbrace:       "}",
 
     # keywords
-    function:  "fn",
-    let:       "let"
+    function:     "fn",
+    let:          "let"
   }
 
 

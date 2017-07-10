@@ -80,4 +80,32 @@ defmodule ExMonkeyTest do
 
     assert {results |> Enum.count, results} == { expected |> Enum.count, expected}
   end
+
+  test "more tokens" do
+
+    input = """
+    !-/*5;
+    5 < 10 > 5;
+    """
+    Lexer.new(input)
+
+    expected = [%Token{type: :exclamation,  literal: "!"},
+                %Token{type: :minus,        literal: "-"},
+                %Token{type: :divide,       literal: "/"},
+                %Token{type: :multiply,     literal: "*"},
+                %Token{type: :int,          literal: "5"},
+                %Token{type: :semicolon,    literal: ";"},
+                %Token{type: :int,          literal: "5"},
+                %Token{type: :less_than,    literal: "<"},
+                %Token{type: :int,          literal: "10"},
+                %Token{type: :greater_than, literal: ">"},
+                %Token{type: :int,          literal: "5"},
+                %Token{type: :semicolon,  literal: ";"},
+                %Token{type: :eof,          literal: :eof}]
+
+
+    results = for _ <- 1..(expected |> Enum.count), do: Lexer.next_token
+
+    assert {results |> Enum.count, results} == { expected |> Enum.count, expected}
+  end
 end
