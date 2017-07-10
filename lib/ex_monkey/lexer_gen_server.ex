@@ -34,8 +34,24 @@ defmodule ExMonkey.Lexer.GenServer do
       with :skip <- state[:char] |> Token.from_string do
         handle_call({:next_token}, from, new_state)
       else
-        char -> {:reply, char, new_state}
+        %Token{type: :assign} = char      -> check_double(new_state, char)
+        %Token{type: :exclamation} = char -> check_double(new_state, char)
+        char                              -> {:reply, char, new_state}
       end
+    end
+  end
+
+  def check_double(state, char) do
+    # we've already advanced so peak is positon
+    peak = state[:input] |> String.codepoints() |> Enum.at(state[:position])
+    if peak == "=" do
+      new_char = char.literal <> peak
+      new_state = state
+                  |> Map.merge(%{char: new_char})
+                  |> read_char() # advance again
+      {:reply, new_char |> Token.from_string, new_state}
+    else
+      {:reply, char, state}
     end
   end
 

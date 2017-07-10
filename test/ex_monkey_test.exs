@@ -145,4 +145,29 @@ defmodule ExMonkeyTest do
 
     assert {results |> Enum.count, results} == { expected |> Enum.count, expected}
   end
+
+  test "double identifiers" do
+
+    input = """
+    10 == 10;
+    10 != 9;
+    """
+
+    Lexer.new(input)
+
+    expected = [%Token{type: :int,       literal: "10"},
+                %Token{type: :equal,     literal: "=="},
+                %Token{type: :int,       literal: "10"},
+                %Token{type: :semicolon, literal: ";"},
+                %Token{type: :int,       literal: "10"},
+                %Token{type: :not_equal, literal: "!="},
+                %Token{type: :int,       literal: "9"},
+                %Token{type: :semicolon, literal: ";"},
+                %Token{type: :eof,       literal: :eof}]
+
+
+    results = for _ <- 1..(expected |> Enum.count), do: Lexer.next_token
+
+    assert {results |> Enum.count, results} == { expected |> Enum.count, expected}
+  end
 end

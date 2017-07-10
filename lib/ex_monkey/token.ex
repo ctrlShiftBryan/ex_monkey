@@ -7,6 +7,7 @@ defmodule ExMonkey.Token do
     eof:          :eof,
 
     # operators
+    exclamation:  "!",
     assign:       "=",
     plus:         "+",
     minus:        "-",
@@ -17,7 +18,6 @@ defmodule ExMonkey.Token do
     comma:        ",",
     semicolon:    ";",
 
-    exclamation:  "!",
 
     greater_than: ">",
     less_than:    "<",
@@ -35,7 +35,10 @@ defmodule ExMonkey.Token do
     function:     "fn",
     if:           "if",
     else:         "else",
-    let:          "let"
+    let:          "let",
+
+    equal:        "==",
+    not_equal:    "!="
   }
 
 
