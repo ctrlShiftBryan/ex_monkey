@@ -14,12 +14,21 @@ defmodule ExMonkey.Lexer.GenServer do
     GenServer.start_link(__MODULE__, init_state, name: name)
   end
 
+  def reset(name, input) do
+    GenServer.call(name, {:reset, input})
+  end
 
   def next_token(name) do
     GenServer.call(name, {:next_token}, 5_000_000)
   end
 
-  require IEx
+  def stop(name) do
+    GenServer.stop(name)
+  end
+
+  def handle_call({:reset, input}, _from, _state) do
+    {:ok, :ok, input}
+  end
 
   def handle_call({:next_token}, from, state) do
     if state[:char] |> Helper.is_letter_or_digit? do

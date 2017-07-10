@@ -8,4 +8,12 @@ defmodule ExMonkey.Lexer do
   def next_token() do
     GenServer.next_token(:lexer)
   end
+
+  def stop() do
+    GenServer.stop(:lexer)
+  end
+
+  def reset(input) do
+    GenServer.reset(:lexer, input)
+  end
 end
