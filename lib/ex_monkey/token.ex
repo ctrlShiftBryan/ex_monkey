@@ -27,8 +27,14 @@ defmodule ExMonkey.Token do
     lbrace:       "{",
     rbrace:       "}",
 
+    true:          "true",
+    false:         "false",
+
     # keywords
+    return:       "return",
     function:     "fn",
+    if:           "if",
+    else:         "else",
     let:          "let"
   }
 

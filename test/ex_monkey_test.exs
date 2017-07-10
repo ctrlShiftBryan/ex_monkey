@@ -100,8 +100,45 @@ defmodule ExMonkeyTest do
                 %Token{type: :int,          literal: "10"},
                 %Token{type: :greater_than, literal: ">"},
                 %Token{type: :int,          literal: "5"},
-                %Token{type: :semicolon,  literal: ";"},
+                %Token{type: :semicolon,    literal: ";"},
                 %Token{type: :eof,          literal: :eof}]
+
+
+    results = for _ <- 1..(expected |> Enum.count), do: Lexer.next_token
+
+    assert {results |> Enum.count, results} == { expected |> Enum.count, expected}
+  end
+
+  test "more keywords" do
+
+    input = """
+    if (5 < 10) {
+      return true;
+    } else {
+      return false;
+    }
+    """
+
+    Lexer.new(input)
+
+    expected = [%Token{type: :if,        literal: "if"},
+                %Token{type: :lparen,    literal: "("},
+                %Token{type: :int,       literal: "5"},
+                %Token{type: :less_than, literal: "<"},
+                %Token{type: :int,       literal: "10"},
+                %Token{type: :rparen,    literal: ")"},
+                %Token{type: :lbrace,    literal: "{" },
+                %Token{type: :return,    literal: "return"},
+                %Token{type: :true,      literal: "true"},
+                %Token{type: :semicolon, literal: ";"},
+                %Token{type: :rbrace,    literal: "}"},
+                %Token{type: :else,      literal: "else"},
+                %Token{type: :lbrace,    literal: "{" },
+                %Token{type: :return,    literal: "return"},
+                %Token{type: :false,     literal: "false"},
+                %Token{type: :semicolon, literal: ";"},
+                %Token{type: :rbrace,    literal: "}"},
+                %Token{type: :eof,       literal: :eof}]
 
 
     results = for _ <- 1..(expected |> Enum.count), do: Lexer.next_token
