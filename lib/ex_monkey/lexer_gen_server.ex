@@ -39,16 +39,35 @@ defmodule ExMonkey.Lexer.GenServer do
     end
   end
 
+  def get_identifier(state) do
+    get_identifier(state, state[:char])
+  end
   def get_identifier(state, identifier) do
-    char = state[:input] |> get_char(state[:position])
+    if state |> keep_going?() do
+      state
+      |> update_char(identifier)
+      |> increment_position()
+      |> get_identifier()
+    else
+      state
+      |> update_char(identifier)
+    end
+  end
+
+  def update_char(state, identifier) do
+    current_char = state[:input] |> get_char(state[:position])
+    new_char = identifier <> current_char
+    state |> Map.merge(%{char: new_char})
+  end
+
+  def increment_position(state) do
     position = state[:position] + 1
     read_position = state[:read_position] + 1
-    new_state =  state |> Map.merge(%{char: identifier <> char, position: position, read_position: read_position})
-    unless state[:input] |> String.codepoints() |> Enum.at(state[:read_position]) |> Helper.is_letter_or_digit? do
-      state |> Map.merge(%{char: identifier <> char})
-    else
-      get_identifier(new_state, identifier <> char)
-    end
+    state |> Map.merge(%{position: position, read_position: read_position})
+  end
+
+  def keep_going?(state) do
+    state[:input] |> String.codepoints() |> Enum.at(state[:read_position]) |> Helper.is_letter_or_digit?
   end
 
   def read_char(state) do
